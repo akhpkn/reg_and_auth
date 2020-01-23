@@ -1,15 +1,17 @@
 package com.example.controller;
 
 
-import com.example.entity.User;
+import com.example.model.Role;
+import com.example.model.RoleName;
+import com.example.model.User;
 import com.example.payload.ApiResponse;
 import com.example.payload.JwtAuthenticationResponse;
 import com.example.payload.LoginRequest;
 import com.example.payload.SignUpRequest;
+import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
 import com.example.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,6 +36,8 @@ public class AuthController {
     AuthenticationManager authenticationManager;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -65,6 +70,11 @@ public class AuthController {
         }
 
         User user = new User(request.getName(), request.getUsername(), request.getEmail(), request.getPassword());
+
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER);
+        if (userRole == null)
+            throw new RuntimeException("User Role not set");
+        user.setRoles(Collections.singleton(userRole));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
