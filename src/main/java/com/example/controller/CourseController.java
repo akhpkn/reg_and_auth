@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import com.example.model.Course;
-import com.example.model.User;
 import com.example.payload.CourseRequest;
 import com.example.repository.CourseRepository;
 import com.example.repository.UserRepository;
@@ -15,8 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -57,10 +54,24 @@ public class CourseController {
 
     @PostMapping("/{courseId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> subscribeCourse(@CurrentUser UserPrincipal currentUser,  @PathVariable("courseId") Long courseId) {
-        User user = userRepository.findByUserId(currentUser.getUserId());
-        user.subscribe(courseRepository.findByCourseId(courseId));
-        userRepository.save(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Void> subscribeCourse(@CurrentUser UserPrincipal currentUser,
+                                                @PathVariable("courseId") Long courseId) {
+       // User user = userRepository.findByUserId(currentUser.getUserId());
+        //user.subscribe(courseRepository.findByCourseId(courseId));
+        //userRepository.save(user);
+        boolean flag = courseService.subscribeCourse(currentUser, courseId);
+        if (flag)
+            return new ResponseEntity<>(HttpStatus.OK);
+        else return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
+    @DeleteMapping("/{courseId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> unsubscribeCourse(@CurrentUser UserPrincipal currentUser,
+                                                  @PathVariable("courseId") Long courseId) {
+        boolean flag = courseService.unsubscribeCourse(currentUser, courseId);
+        if (flag)
+            return new ResponseEntity<>(HttpStatus.OK);
+        else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 }

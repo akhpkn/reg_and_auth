@@ -119,4 +119,8 @@ public class User {
     public void subscribe(Course course) {
         courses.add(course);
     }
+
+    public void unsubscribe(Course course) {
+        courses.remove(course);
+    }
 }
