@@ -1,12 +1,14 @@
 package com.example.controller;
 
 import com.example.model.Course;
+import com.example.model.User;
 import com.example.payload.CourseRequest;
 import com.example.repository.CourseRepository;
 import com.example.repository.UserRepository;
 import com.example.security.CurrentUser;
 import com.example.security.UserPrincipal;
 import com.example.service.CourseService;
+import org.graalvm.compiler.lir.LIR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,16 @@ public class CourseController {
     public ResponseEntity<List<Course>> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
         return new ResponseEntity<>(courses, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getCoursesByUserId(@PathVariable("userId") Long userId) {
+        User user = userRepository.findByUserId(userId);
+        if (user != null) {
+            List<Course> courses = courseService.getCoursesByUser(user);
+            return new ResponseEntity<>(courses, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping

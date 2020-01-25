@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CourseService {
@@ -23,6 +25,12 @@ public class CourseService {
 
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
+    }
+
+    public List<Course> getCoursesByUser(User user) {
+        Set<User> users = new HashSet<>();
+        users.add(user);
+        return courseRepository.findCoursesByUsers(users);
     }
 
     public boolean addCourse(Course course) {
