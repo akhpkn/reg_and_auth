@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -38,6 +39,12 @@ public class User {
     @Size(max = 100)
     private String password;
 
+    @OneToOne
+    @JoinTable(name = "user_image",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Image image;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -45,6 +52,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
     
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinTable(name = "user_courses", 
             joinColumns = @JoinColumn(name = "user_id"), 
             inverseJoinColumns = @JoinColumn(name = "course_id"))
@@ -86,6 +94,14 @@ public class User {
 
     public Set<Course> getCourses() {
         return courses;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public void setCourses(Set<Course> courses) {

@@ -1,5 +1,7 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -22,11 +24,24 @@ public class Course {
     @Size(max = 10000)
     private String description;
 
+    @OneToOne
+    @JoinTable(name = "course_image",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Image image;
+
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinTable(name = "user_courses",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinTable(name = "course_video", joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Set<Video> videos = new HashSet<>();
 
     public Course() {
 
@@ -47,6 +62,22 @@ public class Course {
 
     public Long getCourseId() {
         return courseId;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public Set<Video> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(Set<Video> videos) {
+        this.videos = videos;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public Set<User> getUsers() {

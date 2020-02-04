@@ -32,14 +32,19 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
     @Autowired
     AuthenticationManager authenticationManager;
+
     @Autowired
     UserRepository userRepository;
+
     @Autowired
     RoleRepository roleRepository;
+
     @Autowired
     PasswordEncoder passwordEncoder;
+
     @Autowired
     JwtTokenProvider tokenProvider;
 
